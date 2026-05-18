@@ -1,37 +1,67 @@
+// ReporteController.java
 package cl.duocuc.aduana_reportes_api.controller;
 
-import cl.duocuc.aduana_reportes_api.dto.ReporteDTO;
-import cl.duocuc.aduana_reportes_api.model.Reporte;
+import cl.duocuc.aduana_reportes_api.dto.*;
 import cl.duocuc.aduana_reportes_api.service.ReporteService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reportes")
+@RequestMapping("/api/v1/reportes")
 public class ReporteController {
 
-    @Autowired
-    private ReporteService service;
+    private static final Logger log = LoggerFactory.getLogger(ReporteController.class);
 
-    // GET: Listar todos los reportes generados
-    @GetMapping
-    public ResponseEntity<List<Reporte>> listarTodos() {
-        return ResponseEntity.ok(service.obtenerTodos());
+    private final ReporteService service;
+
+    public ReporteController(ReporteService service) {
+        this.service = service;
     }
 
-    // POST: Generar un nuevo reporte
-    @PostMapping
-    public ResponseEntity<Reporte> generar(@Valid @RequestBody ReporteDTO dto) {
-        // Mapeo manual de DTO a Entidad (esto asegura la separación de capas)
-        Reporte reporte = new Reporte();
-        reporte.setTipo(dto.getTipo());
-        reporte.setDatos(dto.getDatos());
-        reporte.setFecha(java.time.LocalDate.now());
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<ReporteResponseDTO>>> listarTodos() {
+        log.info("GET /api/v1/reportes - Listando reportes");
+        return ResponseEntity.ok(ApiResponse.ok(service.obtenerTodos(), "Reportes obtenidos"));
+    }
 
-        return ResponseEntity.ok(service.generarReporte(reporte));
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ReporteResponseDTO>> buscarPorId(@PathVariable Long id) {
+        log.info("GET /api/v1/reportes/{}", id);
+        return ResponseEntity.ok(ApiResponse.ok(service.buscarPorId(id), "Reporte encontrado"));
+    }
+
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<ApiResponse<List<ReporteResponseDTO>>> buscarPorUsuario(
+            @PathVariable Long idUsuario) {
+        log.info("GET /api/v1/reportes/usuario/{}", idUsuario);
+        return ResponseEntity.ok(ApiResponse.ok(
+                service.obtenerPorUsuario(idUsuario), "Reportes del usuario obtenidos"));
+    }
+
+    // Endpoint clave: reporte consolidado de pasajeros desde Aduana-Api
+    @GetMapping("/consolidado/pasajeros")
+    public ResponseEntity<ApiResponse<List<PasajeroResponse>>> reportePasajeros() {
+        log.info("GET /api/v1/reportes/consolidado/pasajeros - Generando reporte consolidado");
+        return ResponseEntity.ok(service.generarReportePasajeros());
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<ReporteResponseDTO>> registrar(
+            @RequestBody @Valid ReporteRequestDTO dto) {
+        log.info("POST /api/v1/reportes - Registrando reporte tipo: {}", dto.getTipo());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(service.registrarReporte(dto), "Reporte registrado"));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        log.info("DELETE /api/v1/reportes/{}", id);
+        service.eliminarReporte(id);
+        return ResponseEntity.ok(ApiResponse.ok(null, "Reporte eliminado"));
     }
 }

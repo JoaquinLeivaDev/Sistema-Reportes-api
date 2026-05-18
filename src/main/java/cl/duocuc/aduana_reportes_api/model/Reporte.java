@@ -1,11 +1,7 @@
 package cl.duocuc.aduana_reportes_api.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import java.time.LocalDate;
 
 @Entity
@@ -15,7 +11,9 @@ import java.time.LocalDate;
 public class Reporte {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reporte_seq")
+    @SequenceGenerator(name = "reporte_seq", sequenceName = "REPORTE_SEQ", allocationSize = 1)
+    @Column(name = "id_reporte")
     private Long id;
 
     @Column(nullable = false, length = 50)
@@ -24,10 +22,10 @@ public class Reporte {
     @Column(nullable = false)
     private LocalDate fecha;
 
-    @Column(columnDefinition = "TEXT")
-    private String datos; // JSON o CSV convertido a texto
+    @Lob
+    @Column(columnDefinition = "CLOB")
+    private String datos;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario usuario; // Usuario que generó el reporte
+    @Column(name = "id_usuario", nullable = false)
+    private Long idUsuario;
 }
