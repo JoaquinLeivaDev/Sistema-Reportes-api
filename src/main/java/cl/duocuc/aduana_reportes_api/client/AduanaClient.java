@@ -1,12 +1,8 @@
 package cl.duocuc.aduana_reportes_api.client;
 
-import cl.duocuc.aduana_reportes_api.dto.ApiResponse;
-import cl.duocuc.aduana_reportes_api.dto.PasajeroResponse;
-import cl.duocuc.aduana_reportes_api.dto.VehiculoResponse;
-import cl.duocuc.aduana_reportes_api.dto.UsuarioResponse;
+import cl.duocuc.aduana_reportes_api.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @FeignClient(name = "aduana-api", url = "${aduana.api.url}")
@@ -23,4 +19,23 @@ public interface AduanaClient {
 
     @GetMapping("/api/v1/usuarios/{id}")
     ApiResponse<UsuarioResponse> obtenerUsuarioPorId(@PathVariable Long id);
+
+    // Endpoints de reportes
+    @GetMapping("/api/v1/reportes")
+    ApiResponse<List<ReporteResponseDTO>> obtenerReportes();
+
+    @GetMapping("/api/v1/reportes/{id}")
+    ApiResponse<ReporteResponseDTO> obtenerReportePorId(@PathVariable Long id);
+
+    @GetMapping("/api/v1/reportes/usuario/{idUsuario}")
+    ApiResponse<List<ReporteResponseDTO>> obtenerReportesPorUsuario(@PathVariable Long idUsuario);
+
+    @GetMapping("/api/v1/reportes/tipo/{tipo}")
+    ApiResponse<List<ReporteResponseDTO>> obtenerReportesPorTipo(@PathVariable String tipo);
+
+    @PostMapping("/api/v1/reportes")
+    ApiResponse<ReporteResponseDTO> registrarReporte(@RequestBody ReporteRequestDTO dto);
+
+    @DeleteMapping("/api/v1/reportes/{id}")
+    ApiResponse<Void> eliminarReporte(@PathVariable Long id);
 }

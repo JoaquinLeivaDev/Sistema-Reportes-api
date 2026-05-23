@@ -32,12 +32,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
     }
 
-    @ExceptionHandler(DeclaracionNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDeclaracionNotFound(DeclaracionNotFoundException ex) {
-        log.error("Declaración no encontrada: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleConflicto(IllegalArgumentException ex) {
         log.error("Conflicto: {}", ex.getMessage());
