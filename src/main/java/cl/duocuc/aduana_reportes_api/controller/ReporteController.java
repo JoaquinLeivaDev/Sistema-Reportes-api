@@ -1,67 +1,34 @@
-// ReporteController.java
 package cl.duocuc.aduana_reportes_api.controller;
 
 import cl.duocuc.aduana_reportes_api.dto.*;
 import cl.duocuc.aduana_reportes_api.service.ReporteService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/reportes")
 public class ReporteController {
 
-    private static final Logger log = LoggerFactory.getLogger(ReporteController.class);
-
     private final ReporteService service;
 
-    public ReporteController(ReporteService service) {
-        this.service = service;
-    }
-
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ReporteResponseDTO>>> listarTodos() {
-        log.info("GET /api/v1/reportes - Listando reportes");
-        return ResponseEntity.ok(ApiResponse.ok(service.obtenerTodos(), "Reportes obtenidos"));
-    }
+    public ApiResponse<List<ReporteResponseDTO>> listarTodos() { return service.obtenerTodos(); }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ReporteResponseDTO>> buscarPorId(@PathVariable Long id) {
-        log.info("GET /api/v1/reportes/{}", id);
-        return ResponseEntity.ok(ApiResponse.ok(service.buscarPorId(id), "Reporte encontrado"));
-    }
+    public ApiResponse<ReporteResponseDTO> buscarPorId(@PathVariable Long id) { return service.buscarPorId(id); }
 
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<ApiResponse<List<ReporteResponseDTO>>> buscarPorUsuario(
-            @PathVariable Long idUsuario) {
-        log.info("GET /api/v1/reportes/usuario/{}", idUsuario);
-        return ResponseEntity.ok(ApiResponse.ok(
-                service.obtenerPorUsuario(idUsuario), "Reportes del usuario obtenidos"));
-    }
+    public ApiResponse<List<ReporteResponseDTO>> buscarPorUsuario(@PathVariable Long idUsuario) { return service.obtenerPorUsuario(idUsuario); }
 
-    // Endpoint clave: reporte consolidado de pasajeros desde Aduana-Api
     @GetMapping("/consolidado/pasajeros")
-    public ResponseEntity<ApiResponse<List<PasajeroResponse>>> reportePasajeros() {
-        log.info("GET /api/v1/reportes/consolidado/pasajeros - Generando reporte consolidado");
-        return ResponseEntity.ok(service.generarReportePasajeros());
-    }
+    public ApiResponse<List<PasajeroResponse>> reportePasajeros() { return service.generarReportePasajeros(); }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ReporteResponseDTO>> registrar(
-            @RequestBody @Valid ReporteRequestDTO dto) {
-        log.info("POST /api/v1/reportes - Registrando reporte tipo: {}", dto.getTipo());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(service.registrarReporte(dto), "Reporte registrado"));
-    }
+    public ApiResponse<ReporteResponseDTO> registrar(@RequestBody @Valid ReporteRequestDTO dto) { return service.registrarReporte(dto); }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
-        log.info("DELETE /api/v1/reportes/{}", id);
-        service.eliminarReporte(id);
-        return ResponseEntity.ok(ApiResponse.ok(null, "Reporte eliminado"));
-    }
+    public ApiResponse<Void> eliminar(@PathVariable Long id) { return service.eliminarReporte(id); }
 }
