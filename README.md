@@ -6,7 +6,12 @@ Microservicio de gestión de reportes perteneciente al sistema de Aduana. Actúa
 
 ## Integrantes
 
-- Joaquin Leiva
+| Nombre | Rol |
+|--------|-----|
+| Joaquín Leiva | Líder Técnico / Arquitecto |
+| Octavio Echeverría | Desarrollador Backend Senior |
+| Thiara Rojas | Desarrolladora Frontend / UX |
+| Luna Bustamante | Desarrolladora Junior / QA |
 
 ## Tecnologías utilizadas
 
