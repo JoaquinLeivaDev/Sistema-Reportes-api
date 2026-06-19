@@ -3,9 +3,10 @@ package cl.duocuc.aduana_reportes_api.client;
 import cl.duocuc.aduana_reportes_api.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-@FeignClient(name = "aduana-api", url = "http://localhost:8080")
+@FeignClient(name = "aduana-api", url = "${aduana.api.url}")
 public interface AduanaClient {
 
     @GetMapping("/api/v1/pasajeros")
@@ -20,7 +21,6 @@ public interface AduanaClient {
     @GetMapping("/api/v1/usuarios/{id}")
     ApiResponse<UsuarioResponse> obtenerUsuarioPorId(@PathVariable Long id);
 
-    // Endpoints de reportes
     @GetMapping("/api/v1/reportes")
     ApiResponse<List<ReporteResponseDTO>> obtenerReportes();
 

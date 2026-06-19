@@ -4,6 +4,8 @@ import cl.duocuc.aduana_reportes_api.dto.*;
 import cl.duocuc.aduana_reportes_api.service.ReporteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -15,20 +17,35 @@ public class ReporteController {
     private final ReporteService service;
 
     @GetMapping
-    public ApiResponse<List<ReporteResponseDTO>> listarTodos() { return service.obtenerTodos(); }
+    public ResponseEntity<ApiResponse<List<ReporteResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(service.obtenerTodos());
+    }
 
     @GetMapping("/{id}")
-    public ApiResponse<ReporteResponseDTO> buscarPorId(@PathVariable Long id) { return service.buscarPorId(id); }
+    public ResponseEntity<ApiResponse<ReporteResponseDTO>> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
+    }
 
     @GetMapping("/usuario/{idUsuario}")
-    public ApiResponse<List<ReporteResponseDTO>> buscarPorUsuario(@PathVariable Long idUsuario) { return service.obtenerPorUsuario(idUsuario); }
+    public ResponseEntity<ApiResponse<List<ReporteResponseDTO>>> buscarPorUsuario(
+            @PathVariable Long idUsuario) {
+        return ResponseEntity.ok(service.obtenerPorUsuario(idUsuario));
+    }
 
     @GetMapping("/consolidado/pasajeros")
-    public ApiResponse<List<PasajeroResponse>> reportePasajeros() { return service.generarReportePasajeros(); }
+    public ResponseEntity<ApiResponse<List<PasajeroResponse>>> reportePasajeros() {
+        return ResponseEntity.ok(service.generarReportePasajeros());
+    }
 
     @PostMapping
-    public ApiResponse<ReporteResponseDTO> registrar(@RequestBody @Valid ReporteRequestDTO dto) { return service.registrarReporte(dto); }
+    public ResponseEntity<ApiResponse<ReporteResponseDTO>> registrar(
+            @RequestBody @Valid ReporteRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.registrarReporte(dto));
+    }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> eliminar(@PathVariable Long id) { return service.eliminarReporte(id); }
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        return ResponseEntity.ok(service.eliminarReporte(id));
+    }
 }
